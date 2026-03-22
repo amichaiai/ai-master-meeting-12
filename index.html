@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>מפגש 12 — איך יוצרים עובד ומחלקה שלמה ב Claude Cowork</title>
+<meta name="description" content="מפגש 12 של קהילת AI Master — איך יוצרים עובד ומחלקה שלמה ב-Claude Cowork. יום שלישי, 24 במרץ 2026 בשעה 20:30.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Rubik:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -11,19 +12,32 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --bg-deep: #0a0e1a;
-  --bg-card: #111827;
-  --bg-card-hover: #1a2235;
+  --bg-deep: #05080f;
+  --bg-card: rgba(17, 24, 39, 0.6);
+  --bg-card-solid: #111827;
+  --bg-card-hover: rgba(26, 34, 53, 0.8);
   --accent: #00e5a0;
   --accent-dim: #00c48a;
   --accent-glow: rgba(0, 229, 160, 0.25);
   --accent-glow-strong: rgba(0, 229, 160, 0.45);
+  --accent-subtle: rgba(0, 229, 160, 0.06);
   --text-primary: #f0f4f8;
-  --text-secondary: #8b97a8;
+  --text-secondary: #94a3b8;
   --text-muted: #5a6577;
   --border: rgba(255, 255, 255, 0.06);
-  --timer-bg: #0d1322;
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --timer-bg: rgba(13, 19, 34, 0.8);
   --danger: #ff4d6a;
+  --purple: #7c3aed;
+  --purple-glow: rgba(124, 58, 237, 0.3);
+  --glass-blur: 20px;
+  --radius-lg: 20px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --transition-fast: 150ms;
+  --transition-normal: 250ms;
+  --transition-slow: 400ms;
+  --easing: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html { scroll-behavior: smooth; }
@@ -32,33 +46,78 @@ body {
   font-family: 'Heebo', sans-serif;
   background: var(--bg-deep);
   color: var(--text-primary);
-  min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Animated background grid ─── */
-body::before {
-  content: '';
+/* ─── Animated Background ─── */
+.bg-layer {
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 229, 160, 0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(0, 100, 200, 0.05) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
+  overflow: hidden;
 }
 
-body::after {
-  content: '';
-  position: fixed;
+/* Grid pattern */
+.bg-grid {
+  position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
   background-size: 60px 60px;
-  pointer-events: none;
-  z-index: 0;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 30%, transparent 80%);
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.12;
+  animation: orb-float 20s ease-in-out infinite;
+}
+
+.orb--1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #00e5a0, transparent 70%);
+  top: -10%;
+  right: -10%;
+  animation-duration: 22s;
+}
+
+.orb--2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #0064c8, transparent 70%);
+  bottom: 10%;
+  left: -15%;
+  animation-duration: 26s;
+  animation-delay: -8s;
+}
+
+.orb--3 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #7c3aed, transparent 70%);
+  top: 50%;
+  right: -5%;
+  animation-duration: 30s;
+  animation-delay: -15s;
+  opacity: 0.08;
+}
+
+@keyframes orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -40px) scale(1.05); }
+  50% { transform: translate(-20px, 20px) scale(0.95); }
+  75% { transform: translate(15px, 35px) scale(1.02); }
 }
 
 /* ─── Layout ─── */
@@ -70,38 +129,74 @@ body::after {
   padding: 40px 24px 60px;
 }
 
-/* ─── Logo ─── */
+/* ─── Top Bar ─── */
 .top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 32px;
-  animation: fadeInDown 0.6s ease-out;
+  animation: fadeInDown 0.6s var(--easing);
 }
 
 .logo {
   width: 56px;
   height: 56px;
   object-fit: contain;
-  filter: drop-shadow(0 0 12px rgba(0, 229, 160, 0.2));
+  filter: drop-shadow(0 0 16px rgba(0, 229, 160, 0.15));
+  transition: filter var(--transition-normal) ease;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 24px rgba(0, 229, 160, 0.3));
+}
+
+/* ─── Live Badge ─── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 229, 160, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 229, 160, 0.15);
+  border-radius: 100px;
+  padding: 6px 18px 6px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.badge .dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+  box-shadow: 0 0 8px var(--accent-glow-strong);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px var(--accent-glow-strong); transform: scale(1); }
+  50% { opacity: 0.6; box-shadow: 0 0 12px var(--accent-glow-strong), 0 0 24px var(--accent-glow); transform: scale(1.15); }
 }
 
 /* ─── Hero Image ─── */
 .hero-wrap {
   margin-bottom: 36px;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   position: relative;
-  animation: fadeInUp 0.6s ease-out 0.05s both;
-  border: 1px solid var(--border);
+  animation: fadeInUp 0.6s var(--easing) 0.05s both;
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .hero-wrap::after {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 20px;
-  box-shadow: inset 0 -60px 40px -20px var(--bg-deep);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 -80px 60px -20px var(--bg-deep);
   pointer-events: none;
 }
 
@@ -111,35 +206,6 @@ body::after {
   object-fit: cover;
 }
 
-/* ─── Top badge ─── */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(0, 229, 160, 0.08);
-  border: 1px solid rgba(0, 229, 160, 0.2);
-  border-radius: 100px;
-  padding: 6px 18px 6px 14px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--accent);
-  margin-bottom: 32px;
-  animation: fadeInDown 0.6s ease-out;
-}
-
-.badge .dot {
-  width: 8px;
-  height: 8px;
-  background: var(--accent);
-  border-radius: 50%;
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent-glow-strong); }
-  50% { opacity: 0.7; box-shadow: 0 0 0 6px transparent; }
-}
-
 /* ─── Header ─── */
 .meeting-number {
   font-family: 'Rubik', sans-serif;
@@ -147,17 +213,19 @@ body::after {
   font-weight: 800;
   line-height: 1;
   color: transparent;
-  background: linear-gradient(135deg, var(--accent) 0%, #00b8d4 50%, var(--accent) 100%);
-  background-size: 200% 200%;
+  background: linear-gradient(135deg, var(--accent) 0%, #00b8d4 40%, var(--accent) 70%, #7c3aed 100%);
+  background-size: 300% 300%;
   -webkit-background-clip: text;
   background-clip: text;
-  animation: gradient-shift 6s ease-in-out infinite, fadeInUp 0.8s ease-out;
+  animation: gradient-shift 8s ease-in-out infinite, fadeInUp 0.8s var(--easing);
   margin-bottom: 8px;
+  filter: drop-shadow(0 0 30px var(--accent-glow));
 }
 
 @keyframes gradient-shift {
   0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  33% { background-position: 50% 100%; }
+  66% { background-position: 100% 50%; }
 }
 
 h1 {
@@ -167,12 +235,13 @@ h1 {
   line-height: 1.3;
   color: var(--text-primary);
   margin-bottom: 16px;
-  animation: fadeInUp 0.8s ease-out 0.1s both;
+  animation: fadeInUp 0.8s var(--easing) 0.1s both;
 }
 
 h1 .highlight {
   color: var(--accent);
   position: relative;
+  text-shadow: 0 0 20px var(--accent-glow);
 }
 
 .subtitle {
@@ -180,13 +249,40 @@ h1 .highlight {
   color: var(--text-secondary);
   line-height: 1.7;
   max-width: 600px;
-  animation: fadeInUp 0.8s ease-out 0.2s both;
+  animation: fadeInUp 0.8s var(--easing) 0.2s both;
   margin-bottom: 48px;
+}
+
+/* ─── Glass Card Mixin ─── */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 160, 0.25), transparent);
 }
 
 /* ─── Countdown ─── */
 .countdown-section {
-  animation: fadeInUp 0.8s ease-out 0.3s both;
+  animation: fadeInUp 0.8s var(--easing) 0.3s both;
   margin-bottom: 40px;
 }
 
@@ -195,8 +291,9 @@ h1 .highlight {
   font-weight: 500;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 16px;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .countdown {
@@ -210,149 +307,158 @@ h1 .highlight {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .countdown-digits {
   position: relative;
-  width: 90px;
-  height: 100px;
+  width: 92px;
+  height: 104px;
   background: var(--timer-bg);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.04);
+  transition: border-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+}
+
+.countdown-digits:hover {
+  border-color: rgba(0, 229, 160, 0.15);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), 0 0 24px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
 .countdown-digits::before {
   content: '';
   position: absolute;
   top: 50%;
-  left: 0;
-  right: 0;
+  left: 8px;
+  right: 8px;
   height: 1px;
   background: rgba(255, 255, 255, 0.04);
 }
 
-.countdown-digits::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-  pointer-events: none;
-}
-
 .countdown-value {
   font-family: 'Rubik', sans-serif;
-  font-size: 44px;
+  font-size: 46px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1;
-  transition: transform 0.3s ease;
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.3s var(--easing);
 }
 
 .countdown-value.tick {
-  animation: tick 0.4s ease;
+  animation: tick 0.4s var(--easing);
 }
 
 @keyframes tick {
-  0% { transform: translateY(-8px); opacity: 0.5; }
-  50% { transform: translateY(2px); }
-  100% { transform: translateY(0); opacity: 1; }
+  0% { transform: translateY(-10px) scale(0.95); opacity: 0.4; }
+  60% { transform: translateY(2px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
 .countdown-unit-label {
   font-size: 12px;
   font-weight: 500;
   color: var(--text-muted);
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
 .countdown-separator {
   font-family: 'Rubik', sans-serif;
   font-size: 36px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--accent);
   align-self: flex-start;
-  padding-top: 28px;
-  animation: blink-colon 1s step-end infinite;
+  padding-top: 30px;
+  animation: blink-colon 1.5s ease-in-out infinite;
+  text-shadow: 0 0 10px var(--accent-glow);
 }
 
 @keyframes blink-colon {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.2; }
+  50% { opacity: 0.15; }
 }
 
 /* ─── Event ended ─── */
 .countdown-ended {
   display: none;
   text-align: center;
-  padding: 24px;
-  background: rgba(255, 77, 106, 0.08);
-  border: 1px solid rgba(255, 77, 106, 0.2);
-  border-radius: 16px;
+  padding: 28px;
+  background: rgba(255, 77, 106, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 77, 106, 0.15);
+  border-radius: var(--radius-md);
   color: var(--danger);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
+  animation: fadeInUp 0.5s var(--easing);
 }
 
 /* ─── Info card ─── */
 .info-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 32px;
+  padding: 28px 32px;
   margin-bottom: 24px;
-  animation: fadeInUp 0.8s ease-out 0.4s both;
-  position: relative;
-  overflow: hidden;
-}
-
-.info-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 229, 160, 0.3), transparent);
+  animation: fadeInUp 0.8s var(--easing) 0.4s both;
 }
 
 .info-row {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 0;
+  gap: 16px;
+  padding: 16px 0;
   border-bottom: 1px solid var(--border);
+  transition: background var(--transition-fast) ease;
 }
 
 .info-row:last-child { border-bottom: none; }
 
+.info-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  margin: 0 -8px;
+  padding: 16px 8px;
+}
+
 .info-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: rgba(0, 229, 160, 0.08);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-subtle);
+  border: 1px solid rgba(0, 229, 160, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 18px;
+  color: var(--accent);
+  transition: background var(--transition-normal) ease, border-color var(--transition-normal) ease;
 }
 
-.info-content {
-  flex: 1;
+.info-row:hover .info-icon {
+  background: rgba(0, 229, 160, 0.1);
+  border-color: rgba(0, 229, 160, 0.2);
 }
+
+.info-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.info-content { flex: 1; }
 
 .info-label {
   font-size: 12px;
   color: var(--text-muted);
   font-weight: 500;
   letter-spacing: 0.5px;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .info-value {
@@ -367,10 +473,22 @@ h1 .highlight {
   direction: rtl;
 }
 
-/* ─── Calendar reminder ─── */
+/* ─── Calendar Section ─── */
 .calendar-section {
-  animation: fadeInUp 0.8s ease-out 0.45s both;
-  margin-bottom: 24px;
+  animation: fadeInUp 0.8s var(--easing) 0.45s both;
+  margin-bottom: 28px;
+}
+
+.calendar-title {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  letter-spacing: 0.5px;
+}
+
+.calendar-btns {
   display: flex;
   gap: 12px;
   justify-content: center;
@@ -381,15 +499,16 @@ h1 .highlight {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 22px;
-  border-radius: 12px;
+  padding: 14px 24px;
+  border-radius: var(--radius-sm);
   font-family: 'Heebo', sans-serif;
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
   border: none;
-  transition: all 0.25s ease;
+  transition: all var(--transition-normal) var(--easing);
+  min-height: 48px;
 }
 
 .cal-btn svg {
@@ -399,30 +518,34 @@ h1 .highlight {
 }
 
 .cal-btn--google {
-  background: rgba(66, 133, 244, 0.12);
-  border: 1px solid rgba(66, 133, 244, 0.3);
+  background: rgba(66, 133, 244, 0.1);
+  border: 1px solid rgba(66, 133, 244, 0.2);
   color: #7aadff;
 }
 
 .cal-btn--google:hover {
-  background: rgba(66, 133, 244, 0.22);
-  transform: translateY(-1px);
+  background: rgba(66, 133, 244, 0.2);
+  border-color: rgba(66, 133, 244, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(66, 133, 244, 0.15);
 }
 
 .cal-btn--apple {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
 }
 
 .cal-btn--apple:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.05);
 }
 
 /* ─── CTA Button ─── */
 .cta-wrap {
-  animation: fadeInUp 0.8s ease-out 0.5s both;
+  animation: fadeInUp 0.8s var(--easing) 0.5s both;
   text-align: center;
   margin-bottom: 32px;
 }
@@ -434,29 +557,37 @@ h1 .highlight {
   gap: 12px;
   width: 100%;
   max-width: 480px;
-  padding: 20px 40px;
+  padding: 22px 40px;
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
   color: #0a0e1a;
   font-family: 'Heebo', sans-serif;
   font-size: 20px;
   font-weight: 700;
   border: none;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   text-decoration: none;
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  transition: transform var(--transition-fast) var(--easing), box-shadow var(--transition-normal) ease;
   box-shadow: 0 4px 24px var(--accent-glow), 0 0 0 0 var(--accent-glow);
+  min-height: 64px;
+  animation: cta-glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes cta-glow-pulse {
+  0%, 100% { box-shadow: 0 4px 24px var(--accent-glow), 0 0 0 0 transparent; }
+  50% { box-shadow: 0 4px 32px var(--accent-glow-strong), 0 0 60px var(--accent-glow); }
 }
 
 .cta-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 40px var(--accent-glow-strong), 0 0 0 4px rgba(0, 229, 160, 0.1);
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 8px 40px var(--accent-glow-strong), 0 0 80px var(--accent-glow);
+  animation: none;
 }
 
 .cta-btn:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.99);
 }
 
 .cta-btn::before {
@@ -466,8 +597,8 @@ h1 .highlight {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s ease;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transition: left 0.6s var(--easing);
 }
 
 .cta-btn:hover::before {
@@ -480,9 +611,9 @@ h1 .highlight {
   flex-shrink: 0;
 }
 
-/* ─── Passcode copy ─── */
+/* ─── Passcode Section ─── */
 .passcode-section {
-  animation: fadeInUp 0.8s ease-out 0.55s both;
+  animation: fadeInUp 0.8s var(--easing) 0.55s both;
   margin-bottom: 40px;
 }
 
@@ -492,12 +623,19 @@ h1 .highlight {
   justify-content: center;
   gap: 16px;
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border-glass);
   border-radius: 14px;
-  padding: 16px 24px;
+  padding: 18px 28px;
   max-width: 480px;
   margin: 0 auto;
   direction: ltr;
+  transition: border-color var(--transition-normal) ease;
+}
+
+.passcode-box:hover {
+  border-color: rgba(0, 229, 160, 0.15);
 }
 
 .passcode-label {
@@ -512,36 +650,50 @@ h1 .highlight {
   font-weight: 700;
   letter-spacing: 6px;
   color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 12px var(--accent-glow);
 }
 
 .copy-btn {
-  background: rgba(0, 229, 160, 0.1);
-  border: 1px solid rgba(0, 229, 160, 0.2);
+  background: rgba(0, 229, 160, 0.08);
+  border: 1px solid rgba(0, 229, 160, 0.15);
   border-radius: 10px;
-  padding: 8px 12px;
+  padding: 10px 16px;
   cursor: pointer;
   color: var(--accent);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   font-family: 'Heebo', sans-serif;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal) var(--easing);
   display: flex;
   align-items: center;
   gap: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
 }
 
 .copy-btn:hover {
-  background: rgba(0, 229, 160, 0.18);
+  background: rgba(0, 229, 160, 0.16);
+  border-color: rgba(0, 229, 160, 0.3);
+  transform: scale(1.03);
 }
 
 .copy-btn.copied {
-  background: rgba(0, 229, 160, 0.25);
+  background: rgba(0, 229, 160, 0.2);
   border-color: var(--accent);
+  box-shadow: 0 0 16px var(--accent-glow);
 }
 
-/* ─── Download link ─── */
+.copy-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ─── Download Section ─── */
 .download-section {
-  animation: fadeInUp 0.8s ease-out 0.58s both;
+  animation: fadeInUp 0.8s var(--easing) 0.58s both;
   margin-bottom: 40px;
   text-align: center;
 }
@@ -551,22 +703,24 @@ h1 .highlight {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 14px 32px;
+  padding: 16px 32px;
   background: transparent;
-  border: 1px solid rgba(0, 229, 160, 0.3);
+  border: 1px solid rgba(0, 229, 160, 0.2);
   border-radius: 14px;
   color: var(--accent);
   font-family: 'Heebo', sans-serif;
   font-size: 16px;
   font-weight: 600;
   text-decoration: none;
-  transition: all 0.25s ease;
+  transition: all var(--transition-normal) var(--easing);
+  min-height: 52px;
 }
 
 .download-btn:hover {
-  background: rgba(0, 229, 160, 0.08);
-  border-color: var(--accent);
-  transform: translateY(-1px);
+  background: rgba(0, 229, 160, 0.06);
+  border-color: rgba(0, 229, 160, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px var(--accent-glow);
 }
 
 .download-btn svg {
@@ -576,16 +730,83 @@ h1 .highlight {
 }
 
 .download-hint {
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 13px;
   color: var(--text-muted);
 }
 
-/* ─── Community join ─── */
+/* ─── Divider ─── */
+.section-divider {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-glow-strong), transparent);
+  margin: 0 auto 40px;
+  border-radius: 2px;
+}
+
+/* ─── Community Section ─── */
 .community-section {
-  animation: fadeInUp 0.8s ease-out 0.62s both;
+  animation: fadeInUp 0.8s var(--easing) 0.62s both;
   margin-bottom: 40px;
   text-align: center;
+}
+
+.community-card {
+  background: rgba(124, 58, 237, 0.06);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(124, 58, 237, 0.12);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  max-width: 480px;
+  margin: 0 auto;
+  transition: border-color var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+}
+
+.community-card:hover {
+  border-color: rgba(124, 58, 237, 0.25);
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.1);
+}
+
+.community-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.3), transparent);
+}
+
+.community-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(168, 85, 247, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  color: #a855f7;
+}
+
+.community-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.community-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.community-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.6;
 }
 
 .community-btn {
@@ -602,13 +823,35 @@ h1 .highlight {
   font-size: 17px;
   font-weight: 700;
   text-decoration: none;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+  transition: all var(--transition-normal) var(--easing);
+  box-shadow: 0 4px 20px var(--purple-glow);
+  min-height: 56px;
+  position: relative;
+  overflow: hidden;
 }
 
 .community-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.01);
   box-shadow: 0 8px 32px rgba(124, 58, 237, 0.45);
+}
+
+.community-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.community-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.6s var(--easing);
+}
+
+.community-btn:hover::before {
+  left: 100%;
 }
 
 .community-btn svg {
@@ -617,36 +860,73 @@ h1 .highlight {
   flex-shrink: 0;
 }
 
-.community-hint {
-  margin-top: 8px;
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
 /* ─── Footer ─── */
 .footer {
   text-align: center;
-  padding: 24px 0;
+  padding: 32px 0;
   color: var(--text-muted);
   font-size: 13px;
-  animation: fadeInUp 0.8s ease-out 0.6s both;
+  animation: fadeInUp 0.8s var(--easing) 0.7s both;
   border-top: 1px solid var(--border);
+}
+
+.footer-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  opacity: 0.6;
+  transition: opacity var(--transition-normal) ease;
+}
+
+.footer:hover .footer-logo {
+  opacity: 0.9;
 }
 
 .footer a {
   color: var(--accent);
   text-decoration: none;
+  transition: color var(--transition-fast) ease;
+}
+
+.footer a:hover {
+  color: var(--accent-dim);
 }
 
 /* ─── Animations ─── */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-12px); }
+  from { opacity: 0; transform: translateY(-16px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Accessibility: Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .orb { animation: none !important; opacity: 0.06; }
+  .countdown-separator { animation: none !important; opacity: 0.5; }
+  .badge .dot { animation: none !important; }
+  .cta-btn { animation: none !important; }
+}
+
+/* ─── Focus States ─── */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.cta-btn:focus-visible,
+.community-btn:focus-visible {
+  outline-offset: 4px;
 }
 
 /* ─── Mobile ─── */
@@ -656,55 +936,82 @@ h1 .highlight {
   .countdown { gap: 8px; }
 
   .countdown-digits {
-    width: 68px;
-    height: 80px;
-    border-radius: 12px;
+    width: 70px;
+    height: 84px;
+    border-radius: var(--radius-sm);
   }
 
-  .countdown-value { font-size: 34px; }
-  .countdown-separator { font-size: 28px; padding-top: 22px; }
+  .countdown-value { font-size: 36px; }
+  .countdown-separator { font-size: 28px; padding-top: 24px; }
 
   .info-card { padding: 20px; }
 
   .passcode-box {
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     padding: 16px;
   }
 
   .passcode-value { font-size: 24px; }
+
+  .community-card { padding: 24px 20px; }
+
+  .cta-btn { font-size: 18px; padding: 20px 32px; }
+
+  .orb--1 { width: 300px; height: 300px; }
+  .orb--2 { width: 250px; height: 250px; }
+  .orb--3 { display: none; }
 }
 
 @media (max-width: 380px) {
   .countdown-digits {
-    width: 58px;
-    height: 68px;
+    width: 60px;
+    height: 72px;
   }
-  .countdown-value { font-size: 28px; }
-  .countdown-separator { font-size: 24px; padding-top: 18px; }
+  .countdown-value { font-size: 30px; }
+  .countdown-separator { font-size: 24px; padding-top: 20px; }
+
+  .calendar-btns { flex-direction: column; align-items: center; }
+  .cal-btn { width: 100%; max-width: 280px; justify-content: center; }
+}
+
+/* ─── Landscape mobile ─── */
+@media (max-height: 500px) and (orientation: landscape) {
+  .page { padding: 16px 24px 32px; }
+  .meeting-number { font-size: 48px; }
+  .countdown-digits { width: 64px; height: 72px; }
+  .countdown-value { font-size: 32px; }
 }
 </style>
 </head>
 <body>
 
+<!-- Animated Background -->
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="orb orb--1"></div>
+  <div class="orb orb--2"></div>
+  <div class="orb orb--3"></div>
+</div>
+
 <div class="page">
 
-  <!-- Top bar with logo and badge -->
+  <!-- Top bar -->
   <div class="top-bar">
     <div class="badge">
-      <span class="dot"></span>
+      <span class="dot" aria-hidden="true"></span>
       <span>AI MASTER — מפגש קהילה</span>
     </div>
-    <img src="ai-master-logo.png" alt="AI Master" class="logo">
+    <img src="ai-master-logo.png" alt="AI Master" class="logo" width="56" height="56">
   </div>
 
   <!-- Hero Image -->
   <div class="hero-wrap">
-    <img src="hero-meeting-12.jpeg" alt="מפגש 12 — Claude Co-Work" class="hero-img">
+    <img src="hero-meeting-12.jpeg" alt="מפגש 12 — Claude Co-Work" class="hero-img" width="800" height="450">
   </div>
 
   <!-- Header -->
-  <div class="meeting-number">#12</div>
+  <div class="meeting-number" aria-hidden="true">#12</div>
   <h1>איך יוצרים <span class="highlight">עובד ומחלקה שלמה</span><br>ב־Claude Cowork</h1>
   <p class="subtitle">
     מפגש מעשי שבו נלמד איך לבנות צוות עבודה שלם בתוך Claude Cowork —
@@ -714,89 +1021,100 @@ h1 .highlight {
   <!-- Countdown -->
   <div class="countdown-section">
     <div class="countdown-label">המפגש מתחיל בעוד</div>
-    <div class="countdown" id="countdown">
+    <div class="countdown" id="countdown" role="timer" aria-label="ספירה לאחור למפגש">
       <div class="countdown-unit">
         <div class="countdown-digits">
-          <span class="countdown-value" id="cd-days">00</span>
+          <span class="countdown-value" id="cd-days" aria-label="ימים">00</span>
         </div>
         <span class="countdown-unit-label">ימים</span>
       </div>
-      <span class="countdown-separator">:</span>
+      <span class="countdown-separator" aria-hidden="true">:</span>
       <div class="countdown-unit">
         <div class="countdown-digits">
-          <span class="countdown-value" id="cd-hours">00</span>
+          <span class="countdown-value" id="cd-hours" aria-label="שעות">00</span>
         </div>
         <span class="countdown-unit-label">שעות</span>
       </div>
-      <span class="countdown-separator">:</span>
+      <span class="countdown-separator" aria-hidden="true">:</span>
       <div class="countdown-unit">
         <div class="countdown-digits">
-          <span class="countdown-value" id="cd-minutes">00</span>
+          <span class="countdown-value" id="cd-minutes" aria-label="דקות">00</span>
         </div>
         <span class="countdown-unit-label">דקות</span>
       </div>
-      <span class="countdown-separator">:</span>
+      <span class="countdown-separator" aria-hidden="true">:</span>
       <div class="countdown-unit">
         <div class="countdown-digits">
-          <span class="countdown-value" id="cd-seconds">00</span>
+          <span class="countdown-value" id="cd-seconds" aria-label="שניות">00</span>
         </div>
         <span class="countdown-unit-label">שניות</span>
       </div>
     </div>
-    <div class="countdown-ended" id="countdown-ended">
+    <div class="countdown-ended" id="countdown-ended" role="alert">
       המפגש כבר התחיל — הצטרפו עכשיו!
     </div>
   </div>
 
   <!-- Info card -->
-  <div class="info-card">
+  <div class="info-card glass-card">
     <div class="info-row">
-      <div class="info-icon">📅</div>
+      <div class="info-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
       <div class="info-content">
         <div class="info-label">תאריך</div>
         <div class="info-value hebrew-dir">יום שלישי, 24 במרץ 2026</div>
       </div>
     </div>
     <div class="info-row">
-      <div class="info-icon">🕗</div>
+      <div class="info-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
       <div class="info-content">
         <div class="info-label">שעה</div>
         <div class="info-value hebrew-dir">20:30 שעון ישראל</div>
       </div>
     </div>
     <div class="info-row">
-      <div class="info-icon">🆔</div>
+      <div class="info-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      </div>
       <div class="info-content">
         <div class="info-label">Meeting ID</div>
-        <div class="info-value">899 8369 6837</div>
+        <div class="info-value" style="font-variant-numeric: tabular-nums;">899 8369 6837</div>
       </div>
     </div>
     <div class="info-row">
-      <div class="info-icon">🔑</div>
+      <div class="info-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
       <div class="info-content">
         <div class="info-label">סיסמה</div>
-        <div class="info-value">957289</div>
+        <div class="info-value" style="font-variant-numeric: tabular-nums;">957289</div>
       </div>
     </div>
   </div>
 
   <!-- Calendar reminders -->
   <div class="calendar-section">
-    <a class="cal-btn cal-btn--google"
-       href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=%D7%9E%D7%A4%D7%92%D7%A9+12+%E2%80%94+Claude+Cowork+%7C+AI+Master&dates=20260324T183000Z/20260324T200000Z&details=%D7%90%D7%99%D7%9A+%D7%99%D7%95%D7%A6%D7%A8%D7%99%D7%9D+%D7%A2%D7%95%D7%91%D7%93+%D7%95%D7%9E%D7%97%D7%9C%D7%A7%D7%94+%D7%A9%D7%9C%D7%9E%D7%94+%D7%91-Claude+Cowork%0A%0AZoom%3A+https%3A%2F%2Fus06web.zoom.us%2Fj%2F89983696837%3Fpwd%3D5U6nWxsDSLa27KfowevZhqzrvXbWly.1%0AMeeting+ID%3A+899+8369+6837%0APasscode%3A+957289&location=Zoom"
-       target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M18 3h-1V2a1 1 0 0 0-2 0v1H9V2a1 1 0 0 0-2 0v1H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3z" fill="#4285F4" opacity="0.3"/><path d="M8 11h3v3H8z" fill="#4285F4"/><path d="M13 11h3v3h-3z" fill="#34A853"/><path d="M8 16h3v3H8z" fill="#FBBC04"/><path d="M13 16h3v3h-3z" fill="#EA4335"/></svg>
-      <span>Google Calendar</span>
-    </a>
-    <button class="cal-btn cal-btn--apple" onclick="downloadICS()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      <span>Apple / Outlook</span>
-    </button>
+    <div class="calendar-title">הוסיפו תזכורת ליומן</div>
+    <div class="calendar-btns">
+      <a class="cal-btn cal-btn--google"
+         href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=%D7%9E%D7%A4%D7%92%D7%A9+12+%E2%80%94+Claude+Cowork+%7C+AI+Master&dates=20260324T183000Z/20260324T200000Z&details=%D7%90%D7%99%D7%9A+%D7%99%D7%95%D7%A6%D7%A8%D7%99%D7%9D+%D7%A2%D7%95%D7%91%D7%93+%D7%95%D7%9E%D7%97%D7%9C%D7%A7%D7%94+%D7%A9%D7%9C%D7%9E%D7%94+%D7%91-Claude+Cowork%0A%0AZoom%3A+https%3A%2F%2Fus06web.zoom.us%2Fj%2F89983696837%3Fpwd%3D5U6nWxsDSLa27KfowevZhqzrvXbWly.1%0AMeeting+ID%3A+899+8369+6837%0APasscode%3A+957289&location=Zoom"
+         target="_blank" rel="noopener" aria-label="הוספת תזכורת ל-Google Calendar">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" fill="#4285F4" opacity="0.2"/><path d="M8 11h3v3H8z" fill="#4285F4"/><path d="M13 11h3v3h-3z" fill="#34A853"/><path d="M8 16h3v2H8z" fill="#FBBC04"/><path d="M13 16h3v2h-3z" fill="#EA4335"/></svg>
+        <span>Google Calendar</span>
+      </a>
+      <button class="cal-btn cal-btn--apple" onclick="downloadICS()" aria-label="הורדת קובץ תזכורת ליומן Apple או Outlook">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Apple / Outlook</span>
+      </button>
+    </div>
   </div>
 
   <!-- CTA -->
   <div class="cta-wrap">
-    <a class="cta-btn" href="https://us06web.zoom.us/j/89983696837?pwd=5U6nWxsDSLa27KfowevZhqzrvXbWly.1" target="_blank" rel="noopener">
+    <a class="cta-btn" href="https://us06web.zoom.us/j/89983696837?pwd=5U6nWxsDSLa27KfowevZhqzrvXbWly.1" target="_blank" rel="noopener" aria-label="הצטרפו למפגש בזום">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h10a4 4 0 0 1 4 4v3l4.4-3.3a1 1 0 0 1 1.6.8v7a1 1 0 0 1-1.6.8L18 13v3a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4z"/></svg>
       <span>הצטרפו למפגש בזום</span>
     </a>
@@ -807,7 +1125,8 @@ h1 .highlight {
     <div class="passcode-box">
       <span class="passcode-label">Passcode:</span>
       <span class="passcode-value">957289</span>
-      <button class="copy-btn" id="copy-btn" onclick="copyPasscode()">
+      <button class="copy-btn" id="copy-btn" onclick="copyPasscode()" aria-label="העתקת סיסמה">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         <span id="copy-text">העתק</span>
       </button>
     </div>
@@ -822,18 +1141,26 @@ h1 .highlight {
     <p class="download-hint">נדרש להתקנה לפני המפגש</p>
   </div>
 
-  <!-- Community join -->
+  <div class="section-divider" aria-hidden="true"></div>
+
+  <!-- Community -->
   <div class="community-section">
-    <a class="community-btn" href="https://ai-amchai-club-asheqel.replit.app/" target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span>צרפו חברים לקהילת AI Master</span>
-    </a>
-    <p class="community-hint">שתפו את הלינק עם חברים שרוצים להצטרף</p>
+    <div class="community-card">
+      <div class="community-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="community-title">הכירו את קהילת AI Master</div>
+      <div class="community-subtitle">שתפו את הלינק עם חברים שרוצים להצטרף ולהתקדם יחד בעולם ה-AI</div>
+      <a class="community-btn" href="https://ai-amchai-club-asheqel.replit.app/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        <span>צרפו חברים לקהילה</span>
+      </a>
+    </div>
   </div>
 
   <!-- Footer -->
   <div class="footer">
-    <img src="ai-master-logo.png" alt="AI Master" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 8px;">
+    <img src="ai-master-logo.png" alt="" class="footer-logo" width="36" height="36" aria-hidden="true">
     <p>AI MASTER Community &mdash; כל הזכויות שמורות</p>
   </div>
 
@@ -929,7 +1256,7 @@ function copyPasscode() {
     setTimeout(() => {
       btn.classList.remove('copied');
       text.textContent = 'העתק';
-    }, 2000);
+    }, 2500);
   });
 }
 </script>
