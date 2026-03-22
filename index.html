@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מפגש 12 — איך יוצרים עובד ומחלקה שלמה ב Claude Cowork</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Rubik:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-deep: #0a0e1a;
+  --bg-card: #111827;
+  --bg-card-hover: #1a2235;
+  --accent: #00e5a0;
+  --accent-dim: #00c48a;
+  --accent-glow: rgba(0, 229, 160, 0.25);
+  --accent-glow-strong: rgba(0, 229, 160, 0.45);
+  --text-primary: #f0f4f8;
+  --text-secondary: #8b97a8;
+  --text-muted: #5a6577;
+  --border: rgba(255, 255, 255, 0.06);
+  --timer-bg: #0d1322;
+  --danger: #ff4d6a;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Heebo', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ─── Animated background grid ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 229, 160, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(0, 100, 200, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Layout ─── */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+/* ─── Logo ─── */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(0, 229, 160, 0.2));
+}
+
+/* ─── Hero Image ─── */
+.hero-wrap {
+  margin-bottom: 36px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  animation: fadeInUp 0.6s ease-out 0.05s both;
+  border: 1px solid var(--border);
+}
+
+.hero-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  box-shadow: inset 0 -60px 40px -20px var(--bg-deep);
+  pointer-events: none;
+}
+
+.hero-img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* ─── Top badge ─── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 229, 160, 0.08);
+  border: 1px solid rgba(0, 229, 160, 0.2);
+  border-radius: 100px;
+  padding: 6px 18px 6px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
+  margin-bottom: 32px;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.badge .dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent-glow-strong); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 6px transparent; }
+}
+
+/* ─── Header ─── */
+.meeting-number {
+  font-family: 'Rubik', sans-serif;
+  font-size: clamp(64px, 12vw, 120px);
+  font-weight: 800;
+  line-height: 1;
+  color: transparent;
+  background: linear-gradient(135deg, var(--accent) 0%, #00b8d4 50%, var(--accent) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: gradient-shift 6s ease-in-out infinite, fadeInUp 0.8s ease-out;
+  margin-bottom: 8px;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+h1 {
+  font-family: 'Heebo', sans-serif;
+  font-size: clamp(24px, 5vw, 38px);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  animation: fadeInUp 0.8s ease-out 0.1s both;
+}
+
+h1 .highlight {
+  color: var(--accent);
+  position: relative;
+}
+
+.subtitle {
+  font-size: 17px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 600px;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+  margin-bottom: 48px;
+}
+
+/* ─── Countdown ─── */
+.countdown-section {
+  animation: fadeInUp 0.8s ease-out 0.3s both;
+  margin-bottom: 40px;
+}
+
+.countdown-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.countdown {
+  display: flex;
+  gap: 12px;
+  direction: ltr;
+  justify-content: center;
+}
+
+.countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.countdown-digits {
+  position: relative;
+  width: 90px;
+  height: 100px;
+  background: var(--timer-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.countdown-digits::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.countdown-digits::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+  pointer-events: none;
+}
+
+.countdown-value {
+  font-family: 'Rubik', sans-serif;
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.countdown-value.tick {
+  animation: tick 0.4s ease;
+}
+
+@keyframes tick {
+  0% { transform: translateY(-8px); opacity: 0.5; }
+  50% { transform: translateY(2px); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.countdown-unit-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.countdown-separator {
+  font-family: 'Rubik', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-muted);
+  align-self: flex-start;
+  padding-top: 28px;
+  animation: blink-colon 1s step-end infinite;
+}
+
+@keyframes blink-colon {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+/* ─── Event ended ─── */
+.countdown-ended {
+  display: none;
+  text-align: center;
+  padding: 24px;
+  background: rgba(255, 77, 106, 0.08);
+  border: 1px solid rgba(255, 77, 106, 0.2);
+  border-radius: 16px;
+  color: var(--danger);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* ─── Info card ─── */
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 24px;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 160, 0.3), transparent);
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-row:last-child { border-bottom: none; }
+
+.info-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(0, 229, 160, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.info-content {
+  flex: 1;
+}
+
+.info-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.info-value {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 500;
+  direction: ltr;
+  text-align: right;
+}
+
+.info-value.hebrew-dir {
+  direction: rtl;
+}
+
+/* ─── CTA Button ─── */
+.cta-wrap {
+  animation: fadeInUp 0.8s ease-out 0.5s both;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 480px;
+  padding: 20px 40px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
+  color: #0a0e1a;
+  font-family: 'Heebo', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 24px var(--accent-glow), 0 0 0 0 var(--accent-glow);
+}
+
+.cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px var(--accent-glow-strong), 0 0 0 4px rgba(0, 229, 160, 0.1);
+}
+
+.cta-btn:active {
+  transform: translateY(0);
+}
+
+.cta-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.cta-btn:hover::before {
+  left: 100%;
+}
+
+.cta-btn svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+/* ─── Passcode copy ─── */
+.passcode-section {
+  animation: fadeInUp 0.8s ease-out 0.55s both;
+  margin-bottom: 40px;
+}
+
+.passcode-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 24px;
+  max-width: 480px;
+  margin: 0 auto;
+  direction: ltr;
+}
+
+.passcode-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.passcode-value {
+  font-family: 'Rubik', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: var(--accent);
+}
+
+.copy-btn {
+  background: rgba(0, 229, 160, 0.1);
+  border: 1px solid rgba(0, 229, 160, 0.2);
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Heebo', sans-serif;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.copy-btn:hover {
+  background: rgba(0, 229, 160, 0.18);
+}
+
+.copy-btn.copied {
+  background: rgba(0, 229, 160, 0.25);
+  border-color: var(--accent);
+}
+
+/* ─── Footer ─── */
+.footer {
+  text-align: center;
+  padding: 24px 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  animation: fadeInUp 0.8s ease-out 0.6s both;
+  border-top: 1px solid var(--border);
+}
+
+.footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* ─── Animations ─── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 600px) {
+  .page { padding: 28px 16px 40px; }
+
+  .countdown { gap: 8px; }
+
+  .countdown-digits {
+    width: 68px;
+    height: 80px;
+    border-radius: 12px;
+  }
+
+  .countdown-value { font-size: 34px; }
+  .countdown-separator { font-size: 28px; padding-top: 22px; }
+
+  .info-card { padding: 20px; }
+
+  .passcode-box {
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+  }
+
+  .passcode-value { font-size: 24px; }
+}
+
+@media (max-width: 380px) {
+  .countdown-digits {
+    width: 58px;
+    height: 68px;
+  }
+  .countdown-value { font-size: 28px; }
+  .countdown-separator { font-size: 24px; padding-top: 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top bar with logo and badge -->
+  <div class="top-bar">
+    <div class="badge">
+      <span class="dot"></span>
+      <span>AI MASTER — מפגש קהילה</span>
+    </div>
+    <img src="ai-master-logo.png" alt="AI Master" class="logo">
+  </div>
+
+  <!-- Hero Image -->
+  <div class="hero-wrap">
+    <img src="hero-meeting-12.jpeg" alt="מפגש 12 — Claude Co-Work" class="hero-img">
+  </div>
+
+  <!-- Header -->
+  <div class="meeting-number">#12</div>
+  <h1>איך יוצרים <span class="highlight">עובד ומחלקה שלמה</span><br>ב־Claude Cowork</h1>
+  <p class="subtitle">
+    מפגש מעשי שבו נלמד איך לבנות צוות עבודה שלם בתוך Claude Cowork —
+    מהגדרת תפקידים ועד הרצת תהליכים אוטומטיים. הצטרפו אלינו ביום שלישי!
+  </p>
+
+  <!-- Countdown -->
+  <div class="countdown-section">
+    <div class="countdown-label">המפגש מתחיל בעוד</div>
+    <div class="countdown" id="countdown">
+      <div class="countdown-unit">
+        <div class="countdown-digits">
+          <span class="countdown-value" id="cd-days">00</span>
+        </div>
+        <span class="countdown-unit-label">ימים</span>
+      </div>
+      <span class="countdown-separator">:</span>
+      <div class="countdown-unit">
+        <div class="countdown-digits">
+          <span class="countdown-value" id="cd-hours">00</span>
+        </div>
+        <span class="countdown-unit-label">שעות</span>
+      </div>
+      <span class="countdown-separator">:</span>
+      <div class="countdown-unit">
+        <div class="countdown-digits">
+          <span class="countdown-value" id="cd-minutes">00</span>
+        </div>
+        <span class="countdown-unit-label">דקות</span>
+      </div>
+      <span class="countdown-separator">:</span>
+      <div class="countdown-unit">
+        <div class="countdown-digits">
+          <span class="countdown-value" id="cd-seconds">00</span>
+        </div>
+        <span class="countdown-unit-label">שניות</span>
+      </div>
+    </div>
+    <div class="countdown-ended" id="countdown-ended">
+      המפגש כבר התחיל — הצטרפו עכשיו!
+    </div>
+  </div>
+
+  <!-- Info card -->
+  <div class="info-card">
+    <div class="info-row">
+      <div class="info-icon">📅</div>
+      <div class="info-content">
+        <div class="info-label">תאריך</div>
+        <div class="info-value hebrew-dir">יום שלישי, 24 במרץ 2026</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">🕗</div>
+      <div class="info-content">
+        <div class="info-label">שעה</div>
+        <div class="info-value hebrew-dir">20:30 שעון ישראל</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">🆔</div>
+      <div class="info-content">
+        <div class="info-label">Meeting ID</div>
+        <div class="info-value">899 8369 6837</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">🔑</div>
+      <div class="info-content">
+        <div class="info-label">סיסמה</div>
+        <div class="info-value">957289</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-wrap">
+    <a class="cta-btn" href="https://us06web.zoom.us/j/89983696837?pwd=5U6nWxsDSLa27KfowevZhqzrvXbWly.1" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h10a4 4 0 0 1 4 4v3l4.4-3.3a1 1 0 0 1 1.6.8v7a1 1 0 0 1-1.6.8L18 13v3a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4z"/></svg>
+      <span>הצטרפו למפגש בזום</span>
+    </a>
+  </div>
+
+  <!-- Passcode -->
+  <div class="passcode-section">
+    <div class="passcode-box">
+      <span class="passcode-label">Passcode:</span>
+      <span class="passcode-value">957289</span>
+      <button class="copy-btn" id="copy-btn" onclick="copyPasscode()">
+        <span id="copy-text">העתק</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <img src="ai-master-logo.png" alt="AI Master" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 8px;">
+    <p>AI MASTER Community &mdash; כל הזכויות שמורות</p>
+  </div>
+
+</div>
+
+<script>
+// ── Countdown Timer ──
+const TARGET = new Date('2026-03-24T20:30:00+02:00').getTime();
+
+const $days = document.getElementById('cd-days');
+const $hours = document.getElementById('cd-hours');
+const $minutes = document.getElementById('cd-minutes');
+const $seconds = document.getElementById('cd-seconds');
+const $countdown = document.getElementById('countdown');
+const $ended = document.getElementById('countdown-ended');
+
+let prev = { d: -1, h: -1, m: -1, s: -1 };
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function animateIfChanged(el, val, key) {
+  if (prev[key] !== val) {
+    el.textContent = pad(val);
+    el.classList.remove('tick');
+    void el.offsetWidth;
+    el.classList.add('tick');
+    prev[key] = val;
+  }
+}
+
+function updateCountdown() {
+  const now = Date.now();
+  const diff = TARGET - now;
+
+  if (diff <= 0) {
+    $countdown.style.display = 'none';
+    document.querySelector('.countdown-label').style.display = 'none';
+    $ended.style.display = 'block';
+    return;
+  }
+
+  const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+  animateIfChanged($days, d, 'd');
+  animateIfChanged($hours, h, 'h');
+  animateIfChanged($minutes, m, 'm');
+  animateIfChanged($seconds, s, 's');
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+// ── Copy Passcode ──
+function copyPasscode() {
+  navigator.clipboard.writeText('957289').then(() => {
+    const btn = document.getElementById('copy-btn');
+    const text = document.getElementById('copy-text');
+    btn.classList.add('copied');
+    text.textContent = 'הועתק!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      text.textContent = 'העתק';
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
