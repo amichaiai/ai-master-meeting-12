@@ -218,18 +218,31 @@ body {
 /* ═══════ HERO IMAGE ═══════ */
 .hero-wrap {
   margin-bottom: 40px;
-  border-radius: var(--radius-lg);
+  margin-left: -24px;
+  margin-right: -24px;
+  border-radius: 0;
   overflow: hidden;
   position: relative;
-  border: 1px solid var(--border-glass);
+  border: none;
+  border-top: 1px solid var(--border-glass);
+  border-bottom: 1px solid var(--border-glass);
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 601px) {
+  .hero-wrap {
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-glass);
+  }
 }
 
 .hero-wrap::after {
   content: '';
   position: absolute;
   inset: 0;
-  box-shadow: inset 0 -100px 80px -30px var(--bg-deep);
+  box-shadow: inset 0 -80px 60px -20px var(--bg-deep);
   pointer-events: none;
 }
 
@@ -237,6 +250,8 @@ body {
   width: 100%;
   display: block;
   object-fit: cover;
+  aspect-ratio: 16 / 9;
+  max-height: 420px;
 }
 
 /* ═══════ MEETING NUMBER — outlined cinematic style ═══════ */
@@ -996,49 +1011,141 @@ h1 .highlight {
 .cta-btn:focus-visible,
 .community-btn:focus-visible { outline-offset: 6px; }
 
-/* ═══════ RESPONSIVE ═══════ */
+/* ═══════ RESPONSIVE — MOBILE FIRST ═══════ */
 @media (max-width: 600px) {
-  .page { padding: 24px 16px 40px; }
+  .page { padding: 20px 14px 36px; }
 
-  .countdown { gap: 8px; padding: 24px 16px; }
+  .top-bar { margin-bottom: 20px; }
+
+  .badge {
+    font-size: 12px;
+    padding: 6px 14px 6px 10px;
+    gap: 7px;
+  }
+
+  .logo { width: 44px; height: 44px; }
+
+  .hero-wrap {
+    margin-bottom: 28px;
+    margin-left: -14px;
+    margin-right: -14px;
+  }
+
+  .hero-img { max-height: 220px; }
+
+  .meeting-number {
+    -webkit-text-stroke: 1.5px var(--accent);
+    margin-bottom: 8px;
+  }
+
+  h1 { font-size: 22px; margin-bottom: 12px; }
+
+  .subtitle {
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 32px;
+  }
+
+  .countdown-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+
+  .countdown { gap: 6px; padding: 20px 12px; }
 
   .countdown-digits {
-    width: 72px;
-    height: 84px;
+    width: 66px;
+    height: 78px;
     border-radius: var(--radius-sm);
   }
 
-  .countdown-value { font-size: 36px; }
-  .countdown-separator { font-size: 28px; padding-top: 24px; }
+  .countdown-value { font-size: 34px; }
+  .countdown-separator { font-size: 24px; padding-top: 22px; }
+  .countdown-unit-label { font-size: 9px; letter-spacing: 1.5px; }
 
-  .info-card { padding: 20px; }
+  .rotating-border-card { border-radius: var(--radius-md); }
+  .rotating-border-card > .card-inner { border-radius: calc(var(--radius-md) - 2px); }
 
+  .info-card { margin-bottom: 20px; }
+  .info-card > .card-inner { padding: 16px !important; }
+
+  .info-row { gap: 12px; padding: 12px 0; }
+  .info-icon { width: 40px; height: 40px; border-radius: 10px; }
+  .info-icon svg { width: 18px; height: 18px; }
+  .info-label { font-size: 10px; }
+  .info-value { font-size: 15px; }
+
+  .calendar-section { margin-bottom: 24px; }
+  .calendar-title { font-size: 13px; margin-bottom: 12px; }
+  .calendar-btns { gap: 10px; }
+  .cal-btn { padding: 12px 18px; font-size: 14px; min-height: 44px; }
+
+  .cta-wrap { margin-bottom: 28px; }
+  .cta-btn { font-size: 17px; padding: 18px 24px; min-height: 56px; }
+  .shiny-cta-outer { border-radius: var(--radius-md); }
+
+  .passcode-section { margin-bottom: 32px; }
   .passcode-box {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     padding: 16px;
+    border-radius: 12px;
   }
+  .passcode-value { font-size: 24px; letter-spacing: 6px; }
+  .passcode-label { font-size: 12px; }
 
-  .passcode-value { font-size: 24px; }
+  .download-section { margin-bottom: 32px; }
+  .download-btn { font-size: 15px; padding: 14px 24px; }
+  .download-hint { font-size: 12px; }
 
-  .community-card { padding: 28px 20px; }
+  .section-divider { margin-bottom: 32px; }
 
-  .cta-btn { font-size: 18px; padding: 20px 28px; }
+  .community-card { padding: 24px 16px; border-radius: var(--radius-md); }
+  .community-icon { width: 48px; height: 48px; border-radius: 14px; }
+  .community-icon svg { width: 24px; height: 24px; }
+  .community-title { font-size: 16px; }
+  .community-subtitle { font-size: 13px; margin-bottom: 20px; }
+  .community-btn { font-size: 15px; padding: 14px 28px; min-height: 50px; border-radius: 12px; }
 
-  .meeting-number { -webkit-text-stroke: 1.5px var(--accent); }
+  .footer { padding: 28px 0; font-size: 12px; }
+  .footer-logo { width: 28px; height: 28px; }
+
+  /* Reduce background effects on mobile for performance */
+  .particle:nth-child(n+6) { display: none; }
+  .bg-mesh { opacity: 0.8; }
 }
 
 @media (max-width: 380px) {
-  .countdown-digits { width: 62px; height: 74px; }
-  .countdown-value { font-size: 30px; }
-  .countdown-separator { font-size: 24px; padding-top: 20px; }
-  .calendar-btns { flex-direction: column; align-items: center; }
-  .cal-btn { width: 100%; max-width: 280px; justify-content: center; }
+  .page { padding: 16px 12px 32px; }
+
+  .countdown { gap: 4px; padding: 16px 8px; }
+
+  .countdown-digits { width: 58px; height: 68px; }
+  .countdown-value { font-size: 28px; }
+  .countdown-separator { font-size: 20px; padding-top: 18px; }
+
+  .hero-wrap { margin-left: -12px; margin-right: -12px; }
+  .hero-img { max-height: 180px; }
+
+  h1 { font-size: 20px; }
+
+  .calendar-btns { flex-direction: column; align-items: stretch; }
+  .cal-btn { justify-content: center; }
+
+  .passcode-value { font-size: 22px; letter-spacing: 5px; }
+}
+
+@media (max-width: 340px) {
+  .countdown-digits { width: 52px; height: 62px; }
+  .countdown-value { font-size: 24px; }
+  .countdown-separator { font-size: 18px; padding-top: 16px; }
 }
 
 @media (max-height: 500px) and (orientation: landscape) {
   .page { padding: 16px 24px 32px; }
   .meeting-number { font-size: 48px; }
+  .hero-img { max-height: 160px; }
   .countdown-digits { width: 64px; height: 72px; }
   .countdown-value { font-size: 32px; }
 }
