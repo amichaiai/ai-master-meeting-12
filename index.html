@@ -486,6 +486,48 @@ h1 .highlight {
   border-color: var(--accent);
 }
 
+/* ─── Download link ─── */
+.download-section {
+  animation: fadeInUp 0.8s ease-out 0.58s both;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 32px;
+  background: transparent;
+  border: 1px solid rgba(0, 229, 160, 0.3);
+  border-radius: 14px;
+  color: var(--accent);
+  font-family: 'Heebo', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.download-btn:hover {
+  background: rgba(0, 229, 160, 0.08);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.download-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.download-hint {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
 /* ─── Footer ─── */
 .footer {
   text-align: center;
@@ -660,6 +702,15 @@ h1 .highlight {
         <span id="copy-text">העתק</span>
       </button>
     </div>
+  </div>
+
+  <!-- Download Claude -->
+  <div class="download-section">
+    <a class="download-btn" href="https://claude.com/download" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>הורידו את Claude Code למחשב</span>
+    </a>
+    <p class="download-hint">נדרש להתקנה לפני המפגש</p>
   </div>
 
   <!-- Footer -->
