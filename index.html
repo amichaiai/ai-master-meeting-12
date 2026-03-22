@@ -528,6 +528,48 @@ h1 .highlight {
   color: var(--text-muted);
 }
 
+/* ─── Community join ─── */
+.community-section {
+  animation: fadeInUp 0.8s ease-out 0.62s both;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.community-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 36px;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-family: 'Heebo', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+}
+
+.community-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.45);
+}
+
+.community-btn svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.community-hint {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
 /* ─── Footer ─── */
 .footer {
   text-align: center;
@@ -711,6 +753,15 @@ h1 .highlight {
       <span>הורידו את Claude Code למחשב</span>
     </a>
     <p class="download-hint">נדרש להתקנה לפני המפגש</p>
+  </div>
+
+  <!-- Community join -->
+  <div class="community-section">
+    <a class="community-btn" href="https://ai-amchai-club-asheqel.replit.app/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>צרפו חברים לקהילת AI Master</span>
+    </a>
+    <p class="community-hint">שתפו את הלינק עם חברים שרוצים להצטרף</p>
   </div>
 
   <!-- Footer -->
