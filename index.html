@@ -367,6 +367,59 @@ h1 .highlight {
   direction: rtl;
 }
 
+/* ─── Calendar reminder ─── */
+.calendar-section {
+  animation: fadeInUp 0.8s ease-out 0.45s both;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.25s ease;
+}
+
+.cal-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.cal-btn--google {
+  background: rgba(66, 133, 244, 0.12);
+  border: 1px solid rgba(66, 133, 244, 0.3);
+  color: #7aadff;
+}
+
+.cal-btn--google:hover {
+  background: rgba(66, 133, 244, 0.22);
+  transform: translateY(-1px);
+}
+
+.cal-btn--apple {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+}
+
+.cal-btn--apple:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
 /* ─── CTA Button ─── */
 .cta-wrap {
   animation: fadeInUp 0.8s ease-out 0.5s both;
@@ -727,6 +780,20 @@ h1 .highlight {
     </div>
   </div>
 
+  <!-- Calendar reminders -->
+  <div class="calendar-section">
+    <a class="cal-btn cal-btn--google"
+       href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=%D7%9E%D7%A4%D7%92%D7%A9+12+%E2%80%94+Claude+Cowork+%7C+AI+Master&dates=20260324T183000Z/20260324T200000Z&details=%D7%90%D7%99%D7%9A+%D7%99%D7%95%D7%A6%D7%A8%D7%99%D7%9D+%D7%A2%D7%95%D7%91%D7%93+%D7%95%D7%9E%D7%97%D7%9C%D7%A7%D7%94+%D7%A9%D7%9C%D7%9E%D7%94+%D7%91-Claude+Cowork%0A%0AZoom%3A+https%3A%2F%2Fus06web.zoom.us%2Fj%2F89983696837%3Fpwd%3D5U6nWxsDSLa27KfowevZhqzrvXbWly.1%0AMeeting+ID%3A+899+8369+6837%0APasscode%3A+957289&location=Zoom"
+       target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M18 3h-1V2a1 1 0 0 0-2 0v1H9V2a1 1 0 0 0-2 0v1H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3z" fill="#4285F4" opacity="0.3"/><path d="M8 11h3v3H8z" fill="#4285F4"/><path d="M13 11h3v3h-3z" fill="#34A853"/><path d="M8 16h3v3H8z" fill="#FBBC04"/><path d="M13 16h3v3h-3z" fill="#EA4335"/></svg>
+      <span>Google Calendar</span>
+    </a>
+    <button class="cal-btn cal-btn--apple" onclick="downloadICS()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>Apple / Outlook</span>
+    </button>
+  </div>
+
   <!-- CTA -->
   <div class="cta-wrap">
     <a class="cta-btn" href="https://us06web.zoom.us/j/89983696837?pwd=5U6nWxsDSLa27KfowevZhqzrvXbWly.1" target="_blank" rel="noopener">
@@ -821,6 +888,36 @@ function updateCountdown() {
 
 updateCountdown();
 setInterval(updateCountdown, 1000);
+
+// ── Download ICS (Apple / Outlook) ──
+function downloadICS() {
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//AI Master//Meeting//HE',
+    'BEGIN:VEVENT',
+    'DTSTART:20260324T183000Z',
+    'DTEND:20260324T200000Z',
+    'SUMMARY:מפגש 12 — Claude Cowork | AI Master',
+    'DESCRIPTION:איך יוצרים עובד ומחלקה שלמה ב-Claude Cowork\\n\\nZoom: https://us06web.zoom.us/j/89983696837?pwd=5U6nWxsDSLa27KfowevZhqzrvXbWly.1\\nMeeting ID: 899 8369 6837\\nPasscode: 957289',
+    'LOCATION:Zoom',
+    'URL:https://us06web.zoom.us/j/89983696837?pwd=5U6nWxsDSLa27KfowevZhqzrvXbWly.1',
+    'BEGIN:VALARM',
+    'TRIGGER:-PT30M',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:מפגש 12 — Claude Cowork מתחיל בעוד 30 דקות',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'ai-master-meeting-12.ics';
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 // ── Copy Passcode ──
 function copyPasscode() {
