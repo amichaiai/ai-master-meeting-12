@@ -296,55 +296,63 @@ h1 .highlight {
   margin-bottom: 52px;
 }
 
-/* ═══════ ROTATING BORDER CARD (inspired by 21st.dev Shiny Button) ═══════ */
+/* ═══════ PULSING BORDER CARD ═══════ */
+@property --pulse-opacity {
+  syntax: "<number>";
+  initial-value: 0.3;
+  inherits: false;
+}
+
 .rotating-border-card {
   position: relative;
   border-radius: var(--radius-lg);
-  padding: 2px;
-  background: conic-gradient(
-    from var(--border-angle),
-    transparent 0%,
-    var(--accent) 8%,
-    rgba(99, 102, 241, 0.6) 16%,
-    transparent 24%,
-    transparent 76%,
-    rgba(99, 102, 241, 0.4) 84%,
-    var(--accent) 92%,
-    transparent 100%
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 200, var(--pulse-opacity)) 0%,
+    rgba(99, 102, 241, calc(var(--pulse-opacity) * 0.6)) 25%,
+    rgba(0, 255, 200, calc(var(--pulse-opacity) * 0.2)) 50%,
+    rgba(99, 102, 241, calc(var(--pulse-opacity) * 0.5)) 75%,
+    rgba(0, 255, 200, var(--pulse-opacity)) 100%
   );
-  animation: rotate-border 6s linear infinite;
+  animation: border-pulse 5s ease-in-out infinite;
 }
 
-@keyframes rotate-border {
-  to { --border-angle: 360deg; }
+@keyframes border-pulse {
+  0%, 100% { --pulse-opacity: 0.15; }
+  50% { --pulse-opacity: 0.5; }
 }
 
 .rotating-border-card > .card-inner {
   background: rgba(8, 12, 24, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-radius: calc(var(--radius-lg) - 2px);
+  border-radius: calc(var(--radius-lg) - 1px);
   overflow: hidden;
   position: relative;
 }
 
-/* Glow underneath */
+/* Soft glow underneath that breathes */
 .rotating-border-card::before {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: var(--radius-lg);
-  background: conic-gradient(
-    from var(--border-angle),
-    transparent 0%,
-    var(--accent) 8%,
-    var(--indigo) 16%,
-    transparent 24%
+  inset: -4px;
+  border-radius: calc(var(--radius-lg) + 4px);
+  background: linear-gradient(
+    135deg,
+    var(--accent) 0%,
+    var(--indigo) 50%,
+    var(--accent) 100%
   );
-  filter: blur(20px);
-  opacity: 0.3;
+  filter: blur(24px);
+  opacity: 0;
   z-index: -1;
-  animation: rotate-border 6s linear infinite;
+  animation: glow-pulse 5s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.05; }
+  50% { opacity: 0.18; }
 }
 
 /* ═══════ COUNTDOWN ═══════ */
@@ -634,18 +642,21 @@ h1 .highlight {
   display: inline-block;
   position: relative;
   border-radius: var(--radius-md);
-  padding: 2px;
-  background: conic-gradient(
-    from var(--border-angle),
-    transparent,
-    var(--accent) 10%,
-    rgba(255, 255, 255, 0.6) 20%,
-    var(--accent) 30%,
-    transparent 40%
+  padding: 1.5px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 200, var(--pulse-opacity)) 0%,
+    rgba(255, 255, 255, calc(var(--pulse-opacity) * 0.4)) 50%,
+    rgba(0, 255, 200, var(--pulse-opacity)) 100%
   );
-  animation: rotate-border 4s linear infinite;
+  animation: cta-border-pulse 4s ease-in-out infinite;
   width: 100%;
   max-width: 480px;
+}
+
+@keyframes cta-border-pulse {
+  0%, 100% { --pulse-opacity: 0.2; }
+  50% { --pulse-opacity: 0.7; }
 }
 
 /* Glow under CTA */
